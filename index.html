@@ -200,7 +200,57 @@
             font-family: 'Orbitron', sans-serif;
             text-shadow: 0 0 5px #00aaff;
         }
+        
+        /* Base style for all swimming creatures */
+        .swimming-creature {
+            position: fixed; /* Use fixed for background animation */
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            will-change: transform;
+        }
 
+        /* Specific styles for the three turtles */
+        .turtle-1 {
+            width: 75px;
+            bottom: 15%;
+            animation-name: swim-right;
+            animation-duration: 35s;
+            animation-delay: 2s;
+        }
+
+        .turtle-2 {
+            width: 60px;
+            bottom: 40%;
+            animation-name: swim-left;
+            animation-duration: 40s;
+            animation-delay: 10s;
+        }
+
+        .turtle-3 {
+            width: 85px;
+            bottom: 60%;
+            animation-name: swim-right;
+            animation-duration: 50s;
+            animation-delay: 25s;
+        }
+        
+        @keyframes swim-right {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(100vw);
+            }
+        }
+        
+        @keyframes swim-left {
+            from {
+                transform: translateX(100vw) scaleX(-1);
+            }
+            to {
+                transform: translateX(-100%) scaleX(-1);
+            }
+        }
     </style>
 </head>
 <body class="w-full min-h-screen flex items-center justify-center p-4">
@@ -222,6 +272,11 @@
         </div>
         <div class="preloader-text">Loading...</div>
     </div>
+
+    <!-- Three turtle images with different styles and animations -->
+    <img src="R.gif" alt="Swimming Turtle 1" class="swimming-creature turtle-1">
+    <img src="R.gif" alt="Swimming Turtle 2" class="swimming-creature turtle-2">
+    <img src="R.gif" alt="Swimming Turtle 3" class="swimming-creature turtle-3">
 
     <header class="fixed top-0 left-0 w-full flex justify-between items-center p-4 md:p-6 z-10">
         <img src="Cre8x2D.png" alt="CRE8X Logo" class="h-20 md:h-40">
@@ -272,15 +327,15 @@
                     <li>The editable Figma source file (exported or included).</li>
                     <li>A short README (team name, members, 1–2 sentence concept).</li>
                 </ul>
-                 <a href="https://drive.google.com/drive/folders/1hzwnI9luqFDFYOXSXfY7-eu0Ib2anqyR?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-cyan-700 transition-colors duration-300 shadow-lg shadow-cyan-600/50">
-                     Upload to Google Drive
-                 </a>
+                <a href="https://drive.google.com/drive/folders/1hzwnI9luqFDFYOXSXfY7-eu0Ib2anqyR?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-cyan-700 transition-colors duration-300 shadow-lg shadow-cyan-600/50">
+                    Upload to Google Drive
+                </a>
             </div>
 
             <!-- New Deadline Section -->
             <div>
                 <h2 class="text-2xl font-semibold border-b-2 border-yellow-500/50 pb-2 mb-3 text-yellow-300">Deadline</h2>
-                <p>Within <strong class="text-yellow-200">3 days</strong> of registration to Cre8x. (Eg: If you register on the 1st of September, you will have to submit your document within 3 days, which is by the 4th of September).</p>
+                <p>Within <strong class="text-yellow-200">3 days</strong> of registration to Cre8x. (Eg: If you register on the 1st of August, you will have to submit your document within 3 days which is by the 4th of August).</p>
             </div>
 
             <!-- New Judging Criteria Section -->
@@ -562,7 +617,7 @@
                 sub.draw();
                 // Add bubbles from submarines
                 if(frame % 20 === 0) {
-                   bubbles.push(new Bubble(sub.x - sub.size/2 * sub.direction, sub.y));
+                    bubbles.push(new Bubble(sub.x - sub.size/2 * sub.direction, sub.y));
                 }
             });
 
@@ -593,4 +648,3 @@
     </script>
 </body>
 </html>
-
