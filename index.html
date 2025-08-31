@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRE8X Mini Task Instructions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for the Cyber Ocean Theme */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #020418;
+            color: #E0E0E0;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Neon Glow Effect */
+        .neon-text {
+            color: #ffffff;
+            text-shadow:
+                0 0 5px #00aaff,
+                0 0 10px #00aaff,
+                0 0 20px #00aaff,
+                0 0 40px #0055aa,
+                0 0 80px #0055aa;
+        }
+
+        .task-card {
+            background: rgba(10, 25, 47, 0.8);
+            border: 1px solid rgba(0, 170, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* For Safari */
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.2);
+        }
+
+        .task-card h2, .task-card h3 {
+             color: #00d4ff;
+        }
+
+        .cta-list li::before {
+            content: '»';
+            color: #00d4ff;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .highlight {
+            color: #ffffff;
+            background-color: rgba(0, 212, 255, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* --- New Preloader Styles --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #020418;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .preloader-fish-svg {
+            width: 200px;
+            height: 100px;
+            overflow: visible;
+        }
+
+        .fish-outline {
+            fill: none;
+            stroke: #00aaff;
+            stroke-width: 3;
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: draw-fish 2s forwards;
+        }
+
+        .fish-fill {
+            fill: #00aaff;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fish-fill.filled {
+            opacity: 0.5;
+        }
+
+        .fish-container {
+            position: relative;
+        }
+
+        .fish-container.swim-animation {
+            animation: swim-exit 5s ease-in-out forwards;
+        }
+
+        .preloader-bubble {
+            position: absolute;
+            bottom: 30px;
+            left: 10%; /* Adjusted for the tail */
+            width: 15px;
+            height: 15px;
+            background-color: rgba(0, 170, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .fish-container.swim-animation .preloader-bubble {
+            animation: preloader-bubble-up 3s ease-out forwards;
+        }
+
+        .fish-container.swim-animation .b-1 { animation-delay: 0.1s; }
+        .fish-container.swim-animation .b-2 { animation-delay: 0.3s; }
+        .fish-container.swim-animation .b-3 { animation-delay: 0.5s; }
+        .fish-container.swim-animation .b-4 { animation-delay: 0.7s; }
+        .fish-container.swim-animation .b-5 { animation-delay: 0.9s; }
+
+
+        @keyframes draw-fish {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes swim-exit {
+            0% {
+                transform: translateX(0) rotate(0deg);
+            }
+            15% {
+                transform: translateX(-5px) rotate(5deg);
+            }
+            30% {
+                transform: translateX(5px) rotate(-5deg);
+            }
+            45% {
+                transform: translateX(-5px) rotate(5deg);
+            }
+            60% {
+                transform: translateX(0) rotate(0deg);
+            }
+            100% {
+                transform: translateX(calc(100vw + 200px)) rotate(0deg);
+            }
+        }
+
+        @keyframes preloader-bubble-up {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            20% {
+                transform: translateY(-20px) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .preloader-text {
+            margin-top: 2rem;
+            font-size: 1.25rem;
+            color: #00aaff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px #00aaff;
+        }
+
+    </style>
+</head>
+<body class="w-full min-h-screen flex items-center justify-center p-4">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="fish-container">
+            <svg class="preloader-fish-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fish outline path with a tail -->
+                <path class="fish-outline" d="M10,50 C50,20 120,20 160,50 S120,80 10,50 L-10,40 L-20,50 L-10,60 Z" />
+                <!-- Fish body fill path with a tail -->
+                <path class="fish-fill" d="M10,50 C50,20 120,20 160,50 S120,80 10,50 L-10,40 L-20,50 L-10,60 Z" />
+            </svg>
+            <div class="preloader-bubble b-1"></div>
+            <div class="preloader-bubble b-2"></div>
+            <div class="preloader-bubble b-3"></div>
+            <div class="preloader-bubble b-4"></div>
+            <div class="preloader-bubble b-5"></div>
+        </div>
+        <div class="preloader-text">Loading...</div>
+    </div>
+
+    <header class="fixed top-0 left-0 w-full flex justify-between items-center p-4 md:p-6 z-10">
+        <img src="Cre8x2D.png" alt="CRE8X Logo" class="h-20 md:h-40">
+        <img src="LogoWhite.png" alt="BCS KDU Student Chapter Logo" class="h-20 md:h-40">
+    </header>
+
+    <!-- Animated background canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main content card -->
+    <main class="task-card w-full max-w-4xl rounded-2xl p-6 md:p-10 my-8 mt-24 md:mt-32">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold neon-text">CRE8X (Mini Task)</h1>
+        </header>
+
+        <section class="space-y-8">
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-cyan-500/30 pb-2 mb-3">Topic</h2>
+                <p class="text-lg">Design a quiz app to teach users about marine life.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                 <div>
+                     <h3 class="text-xl font-semibold mb-2">Platform</h3>
+                     <p class="text-base"><span class="highlight">Figma</span></p>
+                 </div>
+                 <div>
+                     <h3 class="text-xl font-semibold mb-2">Goal</h3>
+                     <p class="text-base">Create high-fidelity screens and a simple prototype that teaches users about marine species, habitats, and conservation through a short interactive quiz.</p>
+                 </div>
+            </div>
+
+
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-cyan-500/30 pb-2 mb-3">Required Screens (Mandatory)</h2>
+                <ul class="cta-list list-inside space-y-3 pl-2">
+                    <li><strong class="text-cyan-300">Welcome / Onboarding screen</strong> — app name, short intro, “Start Quiz” CTA.</li>
+                    <li><strong class="text-cyan-300">Quiz question screen</strong> — one question template (supports multiple choice; show correct/incorrect states). Include progress indicator and optional timer.</li>
+                    <li><strong class="text-cyan-300">Result / Summary screen</strong> — final score, correct answers summary, call-to-action (learn more / share).</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-cyan-500/30 pb-2 mb-3">Delivery</h2>
+                <p class="mb-3">Upload the following bundled as a single <span class="highlight">ZIP file</span>:</p>
+                <ul class="list-decimal list-inside space-y-2 pl-4 mb-4">
+                    <li>Screenshots of the three required screens (PNG).</li>
+                    <li>The editable Figma source file (exported or included).</li>
+                    <li>A short README (team name, members, 1–2 sentence concept).</li>
+                </ul>
+                 <a href="https://drive.google.com/drive/folders/1hzwnI9luqFDFYOXSXfY7-eu0Ib2anqyR?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-cyan-700 transition-colors duration-300 shadow-lg shadow-cyan-600/50">
+                     Upload to Google Drive
+                 </a>
+            </div>
+
+            <!-- New Deadline Section -->
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-yellow-500/50 pb-2 mb-3 text-yellow-300">Deadline</h2>
+                <p>Within <strong class="text-yellow-200">3 days</strong> of registration to Cre8x. (Eg: If you register on the 1st of August, you will have to submit your document within 3 days which is by the 4th of August).</p>
+            </div>
+
+            <!-- New Judging Criteria Section -->
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-cyan-500/30 pb-2 mb-4">Judging Criteria</h2>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-black/20">
+                        <div class="sm:col-span-1"><strong class="text-cyan-300">01. Usability</strong> <span class="text-gray-400">(20 pts)</span></div>
+                        <div class="sm:col-span-2 text-gray-300">Ease of Navigation, User-Friendliness</div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-black/20">
+                        <div class="sm:col-span-1"><strong class="text-cyan-300">02. Aesthetics</strong> <span class="text-gray-400">(20 pts)</span></div>
+                        <div class="sm:col-span-2 text-gray-300">Visual Appeal, Consistency</div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-black/20">
+                        <div class="sm:col-span-1"><strong class="text-cyan-300">03. Innovation</strong> <span class="text-gray-400">(20 pts)</span></div>
+                        <div class="sm:col-span-2 text-gray-300">Creativity in AI Integration, Novel Features</div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-black/20">
+                        <div class="sm:col-span-1"><strong class="text-cyan-300">04. Accessibility</strong> <span class="text-gray-400">(20 pts)</span></div>
+                        <div class="sm:col-span-2 text-gray-300">Inclusivity, Diversity</div>
+                    </div>
+                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-black/20">
+                         <div class="sm:col-span-1"><strong class="text-cyan-300">05. Functionality</strong> <span class="text-gray-400">(20 pts)</span></div>
+                         <div class="sm:col-span-2 text-gray-300">Practicality of Features, Reliability</div>
+                     </div>
+                </div>
+                 <p class="mt-6 p-4 bg-blue-900/40 border-l-4 border-blue-400 rounded-r-lg"><strong class="text-blue-300">Important:</strong> Your registrations will be confirmed only upon the submission of the mini-task.</p>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold border-b-2 border-red-500/50 pb-2 mb-3 text-red-300">Important</h2>
+                <p><strong class="text-red-200">ZIP file name:</strong> Rename the ZIP file to your team name (for example: <span class="highlight bg-red-500/20">OceanGuardians.zip</span>).</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // JavaScript for the animated background and the preloader
+        const canvas = document.getElementById('bg-canvas');
+        const preloader = document.getElementById('preloader');
+        const fishContainer = document.getElementById('fish-container');
+        const fishFill = document.querySelector('.fish-fill');
+        const fishOutline = document.querySelector('.fish-outline');
+        const ctx = canvas.getContext('2d');
+
+        // Hide main content until preloader is done
+        document.querySelector('main').style.display = 'none';
+
+        // Wait for the window to load completely before starting animations
+        window.addEventListener('load', () => {
+            // Listen for the 'draw-fish' animation to end
+            fishOutline.addEventListener('animationend', (event) => {
+                if (event.animationName === 'draw-fish') {
+                    // Fill the fish with color
+                    fishFill.classList.add('filled');
+
+                    // After a short delay, start the swim-away animation
+                    setTimeout(() => {
+                        fishContainer.classList.add('swim-animation');
+                    }, 500); // Wait 0.5 seconds
+                }
+            });
+
+            // Listen for the swim-away animation to end
+            fishContainer.addEventListener('animationend', (event) => {
+                if (event.animationName === 'swim-exit') {
+                    // Start fading out the preloader
+                    preloader.classList.add('fade-out');
+                }
+            });
+
+            // Listen for the preloader's fade-out transition to end
+            preloader.addEventListener('transitionend', () => {
+                // Remove the preloader element from the DOM
+                preloader.remove();
+
+                // Show the main content
+                document.querySelector('main').style.display = 'block';
+
+                // Start the main background animation
+                animate();
+            });
+        });
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let fishArray = [];
+        let submarines = [];
+        let bubbles = [];
+        let wave = {
+            y: height / 1.5,
+            length: 0.01,
+            amplitude: 15,
+            frequency: 0.02
+        };
+
+        class Fish {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height * 0.8 + Math.random() * height * 0.15;
+                this.speed = Math.random() * 1.5 + 0.5;
+                this.size = Math.random() * 5 + 8;
+                this.color = `hsl(${Math.random() * 30 + 180}, 100%, 60%)`;
+                this.direction = Math.random() > 0.5 ? 1 : -1;
+            }
+
+            update() {
+                this.x += this.speed * this.direction;
+                if (this.direction === 1 && this.x > width + this.size) {
+                    this.x = -this.size;
+                } else if (this.direction === -1 && this.x < -this.size) {
+                    this.x = width + this.size;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                if (this.direction === 1) { // Facing right
+                    ctx.moveTo(this.x, this.y);
+                    ctx.quadraticCurveTo(this.x + this.size * 0.5, this.y - this.size * 0.7, this.x + this.size, this.y);
+                    ctx.quadraticCurveTo(this.x + this.size * 0.5, this.y + this.size * 0.7, this.x, this.y);
+                    // Add tail
+                    ctx.moveTo(this.x + this.size, this.y);
+                    ctx.lineTo(this.x + this.size + this.size * 0.5, this.y - this.size * 0.3);
+                    ctx.lineTo(this.x + this.size + this.size * 0.5, this.y + this.size * 0.3);
+                    ctx.lineTo(this.x + this.size, this.y);
+                } else { // Facing left
+                    ctx.moveTo(this.x, this.y);
+                    ctx.quadraticCurveTo(this.x - this.size * 0.5, this.y - this.size * 0.7, this.x - this.size, this.y);
+                    ctx.quadraticCurveTo(this.x - this.size * 0.5, this.y + this.size * 0.7, this.x, this.y);
+                    // Add tail
+                    ctx.moveTo(this.x - this.size, this.y);
+                    ctx.lineTo(this.x - this.size - this.size * 0.5, this.y - this.size * 0.3);
+                    ctx.lineTo(this.x - this.size - this.size * 0.5, this.y + this.size * 0.3);
+                    ctx.lineTo(this.x - this.size, this.y);
+                }
+                ctx.fill();
+            }
+        }
+
+        class Submarine {
+            constructor() {
+                this.size = 80;
+                this.direction = Math.random() > 0.5 ? 1 : -1;
+                this.x = this.direction === 1 ? -this.size * 2 : width + this.size * 2;
+                this.y = height * 0.3 + Math.random() * height * 0.4;
+                this.speed = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                this.x += this.speed * this.direction;
+                 if ((this.direction === 1 && this.x > width + this.size * 2) || (this.direction === -1 && this.x < -this.size * 2)) {
+                     // Don't reverse, just reset to the other side for a continuous loop
+                     if (this.direction === 1) {
+                         this.x = -this.size * 2;
+                     } else {
+                         this.x = width + this.size * 2;
+                     }
+                     this.y = height * 0.3 + Math.random() * height * 0.4; // Re-randomize y position
+                 }
+            }
+
+            draw() {
+                const bodyWidth = this.size;
+                const bodyHeight = this.size / 2.5;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                if(this.direction === -1) ctx.scale(-1, 1);
+
+                // Body
+                ctx.fillStyle = '#4a5568'; // a dark gray
+                ctx.beginPath();
+                ctx.ellipse(0, 0, bodyWidth/2, bodyHeight/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Porthole
+                ctx.fillStyle = '#00aaff';
+                ctx.beginPath();
+                ctx.arc(0, -2, bodyHeight/4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2d3748';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Top fin
+                ctx.fillStyle = '#4a5568';
+                ctx.beginPath();
+                ctx.moveTo(-bodyWidth * 0.1, -bodyHeight / 2);
+                ctx.lineTo(bodyWidth * 0.05, -bodyHeight);
+                ctx.lineTo(bodyWidth * 0.15, -bodyHeight);
+                ctx.lineTo(bodyWidth * 0.1, -bodyHeight/2);
+                ctx.closePath();
+                ctx.fill();
+
+                // Propeller
+                ctx.fillStyle = '#2d3748';
+                ctx.fillRect(-bodyWidth/2 - 10, -2, 10, 4);
+
+                // Light cone
+                ctx.beginPath();
+                ctx.moveTo(bodyWidth/2, 0);
+                ctx.lineTo(bodyWidth/2 + 150, -40);
+                ctx.lineTo(bodyWidth/2 + 150, 40);
+                ctx.closePath();
+                const grad = ctx.createLinearGradient(bodyWidth/2, 0, bodyWidth/2 + 150, 0);
+                grad.addColorStop(0, 'rgba(0, 212, 255, 0.2)');
+                grad.addColorStop(1, 'rgba(0, 212, 255, 0)');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        class Bubble {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.radius = Math.random() * 3 + 1;
+                 this.speedY = Math.random() * 1 + 0.5;
+                 this.speedX = Math.random() * 1 - 0.5;
+             }
+             update(){
+                 this.y -= this.speedY;
+                 this.x += this.speedX;
+             }
+             draw(){
+                 ctx.beginPath();
+                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                 ctx.fillStyle = 'rgba(0, 170, 255, 0.3)';
+                 ctx.fill();
+             }
+        }
+
+
+        function init() {
+            fishArray = [];
+            submarines = [];
+            bubbles = [];
+
+            // Adjust element counts for different screen sizes for better performance
+            const isMobile = width < 768; // Tailwind's 'md' breakpoint
+            const fishCount = isMobile ? 10 : 20;
+            const submarineCount = isMobile ? 1 : 2;
+
+            for (let i = 0; i < fishCount; i++) {
+                fishArray.push(new Fish());
+            }
+
+            for (let i = 0; i < submarineCount; i++) {
+                submarines.push(new Submarine());
+            }
+        }
+
+        let frame = 0;
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw water layers
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                const waterColor = `rgba(0, ${80 - i*10}, ${120 - i*10}, ${0.1 + i*0.05})`;
+                ctx.fillStyle = waterColor;
+                ctx.moveTo(0, height);
+                for (let x = 0; x < width; x++) {
+                    const yOffset = Math.sin(x * wave.length + frame * wave.frequency * (i+1)*0.5) * wave.amplitude * (i*0.2 + 1);
+                    ctx.lineTo(x, height * 0.4 + i * 50 + yOffset);
+                }
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                ctx.fill();
+            }
+
+            submarines.forEach(sub => {
+                sub.update();
+                sub.draw();
+                // Add bubbles from submarines
+                if(frame % 20 === 0) {
+                   bubbles.push(new Bubble(sub.x - sub.size/2 * sub.direction, sub.y));
+                }
+            });
+
+            fishArray.forEach(fish => {
+                fish.update();
+                fish.draw();
+            });
+
+            bubbles.forEach((bubble, index) => {
+                bubble.update();
+                bubble.draw();
+                if (bubble.y < 0) {
+                    bubbles.splice(index, 1);
+                }
+            });
+
+            frame++;
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            init();
+        });
+
+        init();
+    </script>
+</body>
+</html>
